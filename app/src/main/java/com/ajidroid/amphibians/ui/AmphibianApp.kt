@@ -15,6 +15,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,7 +52,7 @@ fun AmphiAppBar(scrollBehavior: TopAppBarScrollBehavior, modifier: Modifier = Mo
                 },
         scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.topAppBarColors(
-            titleContentColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = Color.White,
             containerColor = MaterialTheme.colorScheme.onPrimaryContainer
         ),
         modifier = modifier

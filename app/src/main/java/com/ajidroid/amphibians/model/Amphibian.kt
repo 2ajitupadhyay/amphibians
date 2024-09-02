@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Amphibian(
     val name : String,
-    @SerialName(value = "img_src")
-    val image : String,
+    val type : String,
+    @SerialName(value = "img_src") val image : String,
     val description : String
 )
 //object FakeData{

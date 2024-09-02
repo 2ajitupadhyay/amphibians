@@ -5,13 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ajidroid.amphibians.model.Amphibian
 import com.ajidroid.amphibians.network.AmphiApi
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
 sealed interface AmphiUiState {
-    data class Success(val data : String) : AmphiUiState
+    data class Success(val data : List<Amphibian>) : AmphiUiState
     object Loading : AmphiUiState
     object Error : AmphiUiState
 
@@ -30,7 +31,7 @@ class AmphiViewModel : ViewModel() {
             amphiUiState = AmphiUiState.Loading
             amphiUiState = try {
                 val listResult = AmphiApi.retrofitService.getData()
-                AmphiUiState.Success("Success : ${listResult.size} Amphibian data recieved")
+                AmphiUiState.Success(listResult)
             } catch (e : IOException){
                 AmphiUiState.Error
             } catch (e : HttpException){

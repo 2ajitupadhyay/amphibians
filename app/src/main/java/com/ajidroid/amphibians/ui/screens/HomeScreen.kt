@@ -1,5 +1,8 @@
 package com.ajidroid.amphibians.ui.screens
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,15 +16,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.ajidroid.amphibians.R
 import com.ajidroid.amphibians.model.Amphibian
 
@@ -32,11 +46,11 @@ fun HomeScreen(
     contentPadding: PaddingValues
 ){
     when(amphiUiState){
-        is AmphiUiState.Success -> DemoScreen(data = amphiUiState.data, modifier = Modifier.fillMaxWidth())
-//            SuccessScreen(
-//                amphibians = amphiUiState.data,
-//                contentPadding = contentPadding
-//            )
+        is AmphiUiState.Success ->
+            SuccessScreen(
+                amphibians = amphiUiState.data,
+                contentPadding = contentPadding
+            )
         is AmphiUiState.Loading -> LoadingScreen(modifier = Modifier.fillMaxSize())
         is AmphiUiState.Error -> ErrorScreen(modifier = Modifier.fillMaxSize())
     }
@@ -77,7 +91,7 @@ fun ErrorScreen(modifier: Modifier = Modifier){
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_broken_image),
+            painter = painterResource(id = R.drawable.ic_connection_error),
             contentDescription = null,
             modifier = Modifier.size(160.dp , 160.dp)
         )
@@ -86,6 +100,7 @@ fun ErrorScreen(modifier: Modifier = Modifier){
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SuccessScreen(
     amphibians: List<Amphibian>,
@@ -102,19 +117,53 @@ fun SuccessScreen(
     }
 }
 
+@ExperimentalMaterial3Api
 @Composable
 fun AmphibianCard(
     amphibian: Amphibian,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+//    contentPadding: PaddingValues = PaddingValues(0.dp),
     modifier: Modifier = Modifier
     ){
-    Card(modifier) {
-        Column(modifier) {
-            Text(text = amphibian.name)
+    var expanded  by remember { mutableStateOf(false) }
+    
+    Card(
+        onClick = { expanded = !expanded },
+        modifier
+            .fillMaxWidth()
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            ),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(8.dp)
+    ) {
+        Column(modifier = modifier) {
+            Text(
+                text = amphibian.name,
+                fontSize = 24.sp,
+                )
 
+            Spacer(modifier = Modifier.height(8.dp))
 
+            AsyncImage(
+                model = amphibian.image,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = painterResource(id = R.drawable.loading_img),
+                error = painterResource(id = R.drawable.ic_broken_image),
+                contentDescription = amphibian.name,
+                contentScale = ContentScale.FillWidth,
+            )
 
-            Text(text = amphibian.description)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = amphibian.description,
+                modifier = Modifier.padding(horizontal = 8.dp),
+                maxLines = if (!expanded) 1 else 10,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
