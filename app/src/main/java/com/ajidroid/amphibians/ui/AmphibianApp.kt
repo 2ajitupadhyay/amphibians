@@ -35,15 +35,16 @@ fun AmphibianApp(){
         Surface(
             modifier = Modifier.fillMaxSize()
         ){
-            val amphiViewModel : AmphiViewModel = viewModel()
+            val amphiViewModel : AmphiViewModel = viewModel(factory = AmphiViewModel.Factory)
             HomeScreen(
                 amphiUiState = amphiViewModel.amphiUiState,
+                retryAction = amphiViewModel::getAmphiData,
                 contentPadding = it,
             )
         }
     }
 }
-
+//          Add proper theme especially dynamic theme from codelabs
 @Composable
 fun AmphiAppBar(scrollBehavior: TopAppBarScrollBehavior, modifier: Modifier = Modifier){
     CenterAlignedTopAppBar(
